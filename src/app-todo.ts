@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
+import { property, customElement, state, query } from 'lit/decorators.js';
 import './components/app-header';
 
 interface Todo {
@@ -56,6 +56,9 @@ export class AppTodo extends LitElement {
     }
   `;
 
+  @query('input[type="text"]')
+  input!: HTMLInputElement;
+
   @state()
   _todos: Todo[] = [
     { text: 'Learn Lit', done: false },
@@ -72,11 +75,24 @@ export class AppTodo extends LitElement {
     this._todos = [...this._todos];
   }
 
+  handleSubmit (e: Event) {
+    e.preventDefault();
+    console.log(e)
+    this.addTodo({ text: this.input.value, done: false });
+    this.input.value = '';
+  }
+
   render() {
     return html /* html */`
       <main>
         <app-header></app-header>
         <div>
+          <div>
+            <form @submit=${this.handleSubmit}>
+              <input type="text" placeholder="Do the shopping...">
+              <input type="submit" value="Add">
+            </form>
+          </div>
           <ul>
             ${this._todos.map((todo, i) => html /* html */`
               <div class="todo">
